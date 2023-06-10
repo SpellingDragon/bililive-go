@@ -19,7 +19,7 @@ type MockRecorder struct {
 	recorder *MockRecorderMockRecorder
 }
 
-// MockRecorderMockRecorder is the mock recorder for MockRecorder.
+// MockRecorderMockRecorder is the mock SimpleRecorder for MockRecorder.
 type MockRecorderMockRecorder struct {
 	mock *MockRecorder
 }
@@ -97,7 +97,7 @@ type MockManager struct {
 	recorder *MockManagerMockRecorder
 }
 
-// MockManagerMockRecorder is the mock recorder for MockManager.
+// MockManagerMockRecorder is the mock SimpleRecorder for MockManager.
 type MockManagerMockRecorder struct {
 	mock *MockManager
 }

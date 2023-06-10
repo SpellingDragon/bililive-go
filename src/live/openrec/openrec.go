@@ -8,7 +8,6 @@ import (
 	"github.com/hr3lxphr6j/requests"
 
 	"github.com/hr3lxphr6j/bililive-go/src/live"
-	"github.com/hr3lxphr6j/bililive-go/src/live/internal"
 	"github.com/hr3lxphr6j/bililive-go/src/pkg/utils"
 )
 
@@ -18,7 +17,7 @@ const (
 )
 
 type Live struct {
-	internal.BaseLive
+	live.BaseLive
 }
 
 func init() {
@@ -29,7 +28,7 @@ type builder struct{}
 
 func (b *builder) Build(url *url.URL, opt ...live.Option) (live.Live, error) {
 	return &Live{
-		BaseLive: internal.NewBaseLive(url, opt...),
+		BaseLive: live.NewBaseLive(url, opt...),
 	}, nil
 }
 

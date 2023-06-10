@@ -9,7 +9,6 @@ import (
 	"github.com/tidwall/gjson"
 
 	"github.com/hr3lxphr6j/bililive-go/src/live"
-	"github.com/hr3lxphr6j/bililive-go/src/live/internal"
 	"github.com/hr3lxphr6j/bililive-go/src/pkg/utils"
 )
 
@@ -28,12 +27,12 @@ type builder struct{}
 
 func (b *builder) Build(url *url.URL, opt ...live.Option) (live.Live, error) {
 	return &Live{
-		BaseLive: internal.NewBaseLive(url, opt...),
+		BaseLive: live.NewBaseLive(url, opt...),
 	}, nil
 }
 
 type Live struct {
-	internal.BaseLive
+	live.BaseLive
 }
 
 func (l *Live) getData() (*gjson.Result, error) {

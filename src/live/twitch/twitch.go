@@ -11,7 +11,6 @@ import (
 	"github.com/tidwall/gjson"
 
 	"github.com/hr3lxphr6j/bililive-go/src/live"
-	"github.com/hr3lxphr6j/bililive-go/src/live/internal"
 )
 
 const (
@@ -36,14 +35,14 @@ type builder struct{}
 
 func (b *builder) Build(url *url.URL, opt ...live.Option) (live.Live, error) {
 	return &Live{
-		BaseLive: internal.NewBaseLive(url, opt...),
+		BaseLive: live.NewBaseLive(url, opt...),
 	}, nil
 }
 
 var headers = map[string]string{"client-id": clientId}
 
 type Live struct {
-	internal.BaseLive
+	live.BaseLive
 	userId, hostName, roomName string
 }
 
@@ -125,7 +124,8 @@ func (l *Live) GetStreamUrls() (us []*url.URL, err error) {
 			return nil, err
 		}
 	}
-	resp, err := requests.Get(fmt.Sprintf(tokenApiUrl, l.hostName), live.CommonUserAgent, requests.Header("client-id", clientId))
+	resp, err := requests.Get(fmt.Sprintf(tokenApiUrl, l.hostName), live.CommonUserAgent,
+		requests.Header("client-id", clientId))
 	if err != nil {
 		return nil, err
 	}

@@ -70,11 +70,11 @@ type Recorder interface {
 	Close()
 }
 
-type recorder struct {
+type SimpleRecorder struct {
 	Live       live.Live
 	OutPutPath string
 
-	config     *configs.Config
+	Config     *configs.Config
 	ed         events.Dispatcher
 	logger     *interfaces.Logger
 	cache      gcache.Cache
@@ -88,10 +88,10 @@ type recorder struct {
 
 func NewRecorder(ctx context.Context, live live.Live) (Recorder, error) {
 	inst := instance.GetInstance(ctx)
-	return &recorder{
+	return &SimpleRecorder{
 		Live:       live,
 		OutPutPath: instance.GetInstance(ctx).Config.OutPutPath,
-		config:     inst.Config,
+		Config:     inst.Config,
 		cache:      inst.Cache,
 		startTime:  time.Now(),
 		ed:         inst.EventDispatcher.(events.Dispatcher),
@@ -102,7 +102,7 @@ func NewRecorder(ctx context.Context, live live.Live) (Recorder, error) {
 	}, nil
 }
 
-func (r *recorder) tryRecord(ctx context.Context) {
+func (r *SimpleRecorder) TryRecord(ctx context.Context) {
 	urls, err := r.Live.GetStreamUrls()
 	if err != nil || len(urls) == 0 {
 		r.getLogger().WithError(err).Warn("failed to get stream url, will retry after 5s...")
@@ -110,12 +110,17 @@ func (r *recorder) tryRecord(ctx context.Context) {
 		return
 	}
 
-	obj, _ := r.cache.Get(r.Live)
-	info := obj.(*live.Info)
+	obj, err := r.cache.Get(r.Live)
+	var info *live.Info
+	if err == nil && obj != nil {
+		info = obj.(*live.Info)
+	} else {
+		info, _ = r.Live.GetInfo()
+	}
 
-	tmpl := getDefaultFileNameTmpl(r.config)
-	if r.config.OutputTmpl != "" {
-		_tmpl, err := template.New("user_filename").Funcs(utils.GetFuncMap(r.config)).Parse(r.config.OutputTmpl)
+	tmpl := getDefaultFileNameTmpl(r.Config)
+	if r.Config.OutputTmpl != "" {
+		_tmpl, err := template.New("user_filename").Funcs(utils.GetFuncMap(r.Config)).Parse(r.Config.OutputTmpl)
 		if err == nil {
 			tmpl = _tmpl
 		}
@@ -142,23 +147,23 @@ func (r *recorder) tryRecord(ctx context.Context) {
 		return
 	}
 	parserCfg := map[string]string{
-		"timeout_in_us": strconv.Itoa(r.config.TimeoutInUs),
+		"timeout_in_us": strconv.Itoa(r.Config.TimeoutInUs),
 	}
-	if r.config.Debug {
+	if r.Config.Debug {
 		parserCfg["debug"] = "true"
 	}
-	p, err := newParser(url, r.config.Feature.UseNativeFlvParser, parserCfg)
+	parser, err := newParser(url, r.Config.Feature.UseNativeFlvParser, parserCfg)
 	if err != nil {
 		r.getLogger().WithError(err).Error("failed to init parse")
 		return
 	}
-	r.setAndCloseParser(p)
+	r.setAndCloseParser(parser)
 	r.startTime = time.Now()
 	r.getLogger().Debugln("Start ParseLiveStream(" + url.String() + ", " + fileName + ")")
 	r.getLogger().Println(r.parser.ParseLiveStream(ctx, url, r.Live, fileName))
 	r.getLogger().Debugln("End ParseLiveStream(" + url.String() + ", " + fileName + ")")
 	removeEmptyFile(fileName)
-	if r.config.OnRecordFinished.ConvertToMp4 {
+	if r.Config.OnRecordFinished.ConvertToMp4 {
 		ffmpegPath, err := utils.GetFFmpegPath(ctx)
 		if err != nil {
 			r.getLogger().WithError(err).Error("failed to find ffmpeg")
@@ -176,30 +181,30 @@ func (r *recorder) tryRecord(ctx context.Context) {
 		if err = convertCmd.Run(); err != nil {
 			convertCmd.Process.Kill()
 			r.getLogger().Debugln(err)
-		} else if r.config.OnRecordFinished.DeleteFlvAfterConvert {
+		} else if r.Config.OnRecordFinished.DeleteFlvAfterConvert {
 			os.Remove(fileName)
 		}
 	}
 }
 
-func (r *recorder) run(ctx context.Context) {
+func (r *SimpleRecorder) run(ctx context.Context) {
 	for {
 		select {
 		case <-r.stop:
 			return
 		default:
-			r.tryRecord(ctx)
+			r.TryRecord(ctx)
 		}
 	}
 }
 
-func (r *recorder) getParser() parser.Parser {
+func (r *SimpleRecorder) getParser() parser.Parser {
 	r.parserLock.RLock()
 	defer r.parserLock.RUnlock()
 	return r.parser
 }
 
-func (r *recorder) setAndCloseParser(p parser.Parser) {
+func (r *SimpleRecorder) setAndCloseParser(p parser.Parser) {
 	r.parserLock.Lock()
 	defer r.parserLock.Unlock()
 	if r.parser != nil {
@@ -208,7 +213,7 @@ func (r *recorder) setAndCloseParser(p parser.Parser) {
 	r.parser = p
 }
 
-func (r *recorder) Start(ctx context.Context) error {
+func (r *SimpleRecorder) Start(ctx context.Context) error {
 	if !atomic.CompareAndSwapUint32(&r.state, begin, pending) {
 		return nil
 	}
@@ -219,11 +224,11 @@ func (r *recorder) Start(ctx context.Context) error {
 	return nil
 }
 
-func (r *recorder) StartTime() time.Time {
+func (r *SimpleRecorder) StartTime() time.Time {
 	return r.startTime
 }
 
-func (r *recorder) Close() {
+func (r *SimpleRecorder) Close() {
 	if !atomic.CompareAndSwapUint32(&r.state, running, stopped) {
 		return
 	}
@@ -235,11 +240,11 @@ func (r *recorder) Close() {
 	r.ed.DispatchEvent(events.NewEvent(RecorderStop, r.Live))
 }
 
-func (r *recorder) getLogger() *logrus.Entry {
+func (r *SimpleRecorder) getLogger() *logrus.Entry {
 	return r.logger.WithFields(r.getFields())
 }
 
-func (r *recorder) getFields() map[string]interface{} {
+func (r *SimpleRecorder) getFields() map[string]interface{} {
 	obj, err := r.cache.Get(r.Live)
 	if err != nil {
 		return nil
@@ -251,7 +256,7 @@ func (r *recorder) getFields() map[string]interface{} {
 	}
 }
 
-func (r *recorder) GetStatus() (map[string]string, error) {
+func (r *SimpleRecorder) GetStatus() (map[string]string, error) {
 	statusP, ok := r.getParser().(parser.StatusParser)
 	if !ok {
 		return nil, ErrParserNotSupportStatus

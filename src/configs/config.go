@@ -141,8 +141,8 @@ var defaultConfig = Config{
 		OnRoomNameChanged: false,
 	},
 	OnRecordFinished: OnRecordFinished{
-		ConvertToMp4:          false,
-		DeleteFlvAfterConvert: false,
+		ConvertToMp4:          true,
+		DeleteFlvAfterConvert: true,
 	},
 	TimeoutInUs: 60000000,
 }

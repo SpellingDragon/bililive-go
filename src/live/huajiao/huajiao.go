@@ -8,7 +8,6 @@ import (
 	"github.com/tidwall/gjson"
 
 	"github.com/hr3lxphr6j/bililive-go/src/live"
-	"github.com/hr3lxphr6j/bililive-go/src/live/internal"
 	"github.com/hr3lxphr6j/bililive-go/src/pkg/utils"
 )
 
@@ -29,13 +28,13 @@ type builder struct{}
 
 func (b *builder) Build(url *url.URL, opt ...live.Option) (live.Live, error) {
 	return &Live{
-		BaseLive: internal.NewBaseLive(url, opt...),
+		BaseLive: live.NewBaseLive(url, opt...),
 	}, nil
 }
 
 type Live struct {
 	uid string
-	internal.BaseLive
+	live.BaseLive
 }
 
 func (l *Live) getUid() (string, error) {
@@ -73,7 +72,8 @@ func (l *Live) getUid() (string, error) {
 }
 
 func (l *Live) getNickname(uid string) (string, error) {
-	resp, err := requests.Get(apiUserInfo, live.CommonUserAgent, requests.Query("fmt", "json"), requests.Query("uid", uid))
+	resp, err := requests.Get(apiUserInfo, live.CommonUserAgent, requests.Query("fmt", "json"),
+		requests.Query("uid", uid))
 	if err != nil {
 		return "", err
 	}
@@ -91,7 +91,8 @@ func (l *Live) getNickname(uid string) (string, error) {
 }
 
 func (l *Live) getLiveFeeds(uid string) ([]gjson.Result, error) {
-	resp, err := requests.Get(apiUserFeeds, live.CommonUserAgent, requests.Query("fmt", "json"), requests.Query("uid", uid))
+	resp, err := requests.Get(apiUserFeeds, live.CommonUserAgent, requests.Query("fmt", "json"),
+		requests.Query("uid", uid))
 	if err != nil {
 		return nil, err
 	}

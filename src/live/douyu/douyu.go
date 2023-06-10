@@ -14,7 +14,6 @@ import (
 	"github.com/hr3lxphr6j/requests"
 
 	"github.com/hr3lxphr6j/bililive-go/src/live"
-	"github.com/hr3lxphr6j/bililive-go/src/live/internal"
 	"github.com/hr3lxphr6j/bililive-go/src/pkg/utils"
 
 	"github.com/robertkrimen/otto"
@@ -44,7 +43,7 @@ type builder struct{}
 
 func (b *builder) Build(url *url.URL, opt ...live.Option) (live.Live, error) {
 	return &Live{
-		BaseLive: internal.NewBaseLive(url, opt...),
+		BaseLive: live.NewBaseLive(url, opt...),
 	}, nil
 }
 
@@ -141,7 +140,7 @@ func getEngineWithCryptoJS() (*otto.Otto, error) {
 }
 
 type Live struct {
-	internal.BaseLive
+	live.BaseLive
 	roomID string
 }
 
@@ -215,10 +214,11 @@ func (l *Live) GetInfo() (info *live.Info, err error) {
 		return nil, err
 	}
 	info = &live.Info{
-		Live:         l,
-		HostName:     gjson.GetBytes(body, "room.owner_name").String(),
-		RoomName:     gjson.GetBytes(body, "room.room_name").String(),
-		Status:       gjson.GetBytes(body, "room.show_status").Int() == 1 && gjson.GetBytes(body, "room.videoLoop").Int() == 0,
+		Live:     l,
+		HostName: gjson.GetBytes(body, "room.owner_name").String(),
+		RoomName: gjson.GetBytes(body, "room.room_name").String(),
+		Status: gjson.GetBytes(body, "room.show_status").Int() == 1 && gjson.GetBytes(body,
+			"room.videoLoop").Int() == 0,
 		CustomLiveId: "douyu/" + l.roomID,
 	}
 	return info, nil

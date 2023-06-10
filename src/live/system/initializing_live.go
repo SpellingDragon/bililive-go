@@ -4,7 +4,6 @@ import (
 	"net/url"
 
 	"github.com/hr3lxphr6j/bililive-go/src/live"
-	"github.com/hr3lxphr6j/bililive-go/src/live/internal"
 )
 
 func init() {
@@ -15,13 +14,13 @@ type builder struct{}
 
 func (b *builder) Build(live live.Live, url *url.URL, opt ...live.Option) (live.Live, error) {
 	return &InitializingLive{
-		BaseLive:     internal.NewBaseLive(url, opt...),
+		BaseLive:     live.NewBaseLive(url, opt...),
 		OriginalLive: live,
 	}, nil
 }
 
 type InitializingLive struct {
-	internal.BaseLive
+	live.BaseLive
 	OriginalLive live.Live
 }
 

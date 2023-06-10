@@ -47,7 +47,7 @@ func (m *manager) registryListener(ctx context.Context, ed events.Dispatcher) {
 	ed.AddEventListener(listeners.LiveStart, events.NewEventListener(func(event *events.Event) {
 		live := event.Object.(live.Live)
 		if err := m.AddRecorder(ctx, live); err != nil {
-			instance.GetInstance(ctx).Logger.Errorf("failed to add recorder, err: %v", err)
+			instance.GetInstance(ctx).Logger.Errorf("failed to add SimpleRecorder, err: %v", err)
 		}
 	}))
 
@@ -57,7 +57,7 @@ func (m *manager) registryListener(ctx context.Context, ed events.Dispatcher) {
 			return
 		}
 		if err := m.RestartRecorder(ctx, live); err != nil {
-			instance.GetInstance(ctx).Logger.Errorf("failed to cronRestart recorder, err: %v", err)
+			instance.GetInstance(ctx).Logger.Errorf("failed to cronRestart SimpleRecorder, err: %v", err)
 		}
 	}))
 
@@ -67,7 +67,7 @@ func (m *manager) registryListener(ctx context.Context, ed events.Dispatcher) {
 			return
 		}
 		if err := m.RemoveRecorder(ctx, live.GetLiveId()); err != nil {
-			instance.GetInstance(ctx).Logger.Errorf("failed to remove recorder, err: %v", err)
+			instance.GetInstance(ctx).Logger.Errorf("failed to remove SimpleRecorder, err: %v", err)
 		}
 	})
 	ed.AddEventListener(listeners.LiveEnd, removeEvtListener)

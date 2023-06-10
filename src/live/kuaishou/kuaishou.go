@@ -2,13 +2,13 @@ package kuaishou
 
 import (
 	"fmt"
-	"github.com/hr3lxphr6j/requests"
-	"github.com/tidwall/gjson"
 	"net/http"
 	"net/url"
 
+	"github.com/hr3lxphr6j/requests"
+	"github.com/tidwall/gjson"
+
 	"github.com/hr3lxphr6j/bililive-go/src/live"
-	"github.com/hr3lxphr6j/bililive-go/src/live/internal"
 	"github.com/hr3lxphr6j/bililive-go/src/pkg/utils"
 )
 
@@ -27,12 +27,12 @@ type builder struct{}
 
 func (b *builder) Build(url *url.URL, opt ...live.Option) (live.Live, error) {
 	return &Live{
-		BaseLive: internal.NewBaseLive(url, opt...),
+		BaseLive: live.NewBaseLive(url, opt...),
 	}, nil
 }
 
 type Live struct {
-	internal.BaseLive
+	live.BaseLive
 }
 
 func (l *Live) getData() (*gjson.Result, error) {
@@ -94,14 +94,14 @@ func (l *Live) GetStreamUrls() (us []*url.URL, err error) {
 	addr = "liveroom.liveStream.playUrls.0.adaptationSet.representation.0.url"
 
 	// 由于更高清晰度需要cookie，暂时无法传，先注释
-	//maxQuality := len(data.Get("liveroom.liveStream.playUrls.0.adaptationSet.representation").Array()) - 1
-	//if l.Options.Quality != 0 && maxQuality >= l.Options.Quality {
+	// maxQuality := len(data.Get("liveroom.liveStream.playUrls.0.adaptationSet.representation").Array()) - 1
+	// if l.Options.Quality != 0 && maxQuality >= l.Options.Quality {
 	//	addr = "liveroom.liveStream.playUrls.0.adaptationSet.representation." + strconv.Itoa(l.Options.Quality) + ".url"
-	//} else if l.Options.Quality != 0 {
+	// } else if l.Options.Quality != 0 {
 	//	addr = "liveroom.liveStream.playUrls.0.adaptationSet.representation." + strconv.Itoa(maxQuality) + ".url"
-	//} else {
+	// } else {
 	//	addr = "liveroom.liveStream.playUrls.0.adaptationSet.representation.0.url"
-	//}
+	// }
 
 	data.Get(addr).ForEach(func(key, value gjson.Result) bool {
 		urls = append(urls, value.String())
