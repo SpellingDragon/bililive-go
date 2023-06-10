@@ -9,6 +9,7 @@ import (
 	reflect "reflect"
 
 	gomock "github.com/golang/mock/gomock"
+	"github.com/hr3lxphr6j/bililive-go/src/configs"
 	live "github.com/hr3lxphr6j/bililive-go/src/live"
 )
 
@@ -111,7 +112,7 @@ func (mr *MockManagerMockRecorder) Close(arg0 interface{}) *gomock.Call {
 }
 
 // GetListener mocks base method.
-func (m *MockManager) GetListener(arg0 context.Context, arg1 live.ID) (Listener, error) {
+func (m *MockManager) GetListener(arg0 context.Context, arg1 configs.ID) (Listener, error) {
 	m.ctrl.T.Helper()
 	ret := m.ctrl.Call(m, "GetListener", arg0, arg1)
 	ret0, _ := ret[0].(Listener)
@@ -126,7 +127,7 @@ func (mr *MockManagerMockRecorder) GetListener(arg0, arg1 interface{}) *gomock.C
 }
 
 // HasListener mocks base method.
-func (m *MockManager) HasListener(arg0 context.Context, arg1 live.ID) bool {
+func (m *MockManager) HasListener(arg0 context.Context, arg1 configs.ID) bool {
 	m.ctrl.T.Helper()
 	ret := m.ctrl.Call(m, "HasListener", arg0, arg1)
 	ret0, _ := ret[0].(bool)
@@ -140,7 +141,7 @@ func (mr *MockManagerMockRecorder) HasListener(arg0, arg1 interface{}) *gomock.C
 }
 
 // RemoveListener mocks base method.
-func (m *MockManager) RemoveListener(arg0 context.Context, arg1 live.ID) error {
+func (m *MockManager) RemoveListener(arg0 context.Context, arg1 configs.ID) error {
 	m.ctrl.T.Helper()
 	ret := m.ctrl.Call(m, "RemoveListener", arg0, arg1)
 	ret0, _ := ret[0].(error)

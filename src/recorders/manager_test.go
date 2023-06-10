@@ -30,7 +30,7 @@ func TestManagerAddAndRemoveRecorder(t *testing.T) {
 	}
 	defer func() { newRecorder = backup }()
 	l := livemock.NewMockLive(ctrl)
-	l.EXPECT().GetLiveId().Return(live.ID("test")).AnyTimes()
+	l.EXPECT().GetLiveId().Return(configs.ID("test")).AnyTimes()
 	assert.NoError(t, m.AddRecorder(context.Background(), l))
 	assert.Equal(t, ErrRecorderExist, m.AddRecorder(context.Background(), l))
 	ln, err := m.GetRecorder(context.Background(), "test")

@@ -8,7 +8,6 @@ import (
 	"os"
 	"time"
 
-	"github.com/hr3lxphr6j/bililive-go/src/live"
 	"gopkg.in/yaml.v2"
 )
 
@@ -81,10 +80,10 @@ type Config struct {
 }
 
 type LiveRoom struct {
-	Url         string  `yaml:"url"`
-	IsListening bool    `yaml:"is_listening"`
-	LiveId      live.ID `yaml:"-"`
-	Quality     int     `yaml:"quality"`
+	Url         string `yaml:"url"`
+	IsListening bool   `yaml:"is_listening"`
+	LiveId      ID     `yaml:"-"`
+	Quality     int    `yaml:"quality"`
 }
 
 type liveRoomAlias LiveRoom
@@ -253,3 +252,5 @@ func (c Config) GetFilePath() (string, error) {
 	}
 	return c.File, nil
 }
+
+type ID string

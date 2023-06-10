@@ -12,10 +12,10 @@ func init() {
 
 type builder struct{}
 
-func (b *builder) Build(live live.Live, url *url.URL, opt ...live.Option) (live.Live, error) {
+func (b *builder) Build(blive live.Live, url *url.URL, opt ...live.Option) (live.Live, error) {
 	return &InitializingLive{
 		BaseLive:     live.NewBaseLive(url, opt...),
-		OriginalLive: live,
+		OriginalLive: blive,
 	}, nil
 }
 

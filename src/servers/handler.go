@@ -48,7 +48,7 @@ func getAllLives(writer http.ResponseWriter, r *http.Request) {
 func getLive(writer http.ResponseWriter, r *http.Request) {
 	inst := instance.GetInstance(r.Context())
 	vars := mux.Vars(r)
-	live, ok := inst.Lives[live.ID(vars["id"])]
+	live, ok := inst.Lives[configs.ID(vars["id"])]
 	if !ok {
 		writeJsonWithStatusCode(writer, http.StatusNotFound, commonResp{
 			ErrNo:  http.StatusNotFound,
@@ -63,7 +63,7 @@ func parseLiveAction(writer http.ResponseWriter, r *http.Request) {
 	inst := instance.GetInstance(r.Context())
 	vars := mux.Vars(r)
 	resp := commonResp{}
-	live, ok := inst.Lives[live.ID(vars["id"])]
+	live, ok := inst.Lives[configs.ID(vars["id"])]
 	if !ok {
 		resp.ErrNo = http.StatusNotFound
 		resp.ErrMsg = fmt.Sprintf("live id: %s can not find", vars["id"])
@@ -110,7 +110,7 @@ func startListening(ctx context.Context, live live.Live) error {
 	return inst.ListenerManager.(listeners.Manager).AddListener(ctx, live)
 }
 
-func stopListening(ctx context.Context, liveId live.ID) error {
+func stopListening(ctx context.Context, liveId configs.ID) error {
 	inst := instance.GetInstance(ctx)
 	return inst.ListenerManager.(listeners.Manager).RemoveListener(ctx, liveId)
 }
@@ -197,7 +197,7 @@ func addLiveImpl(ctx context.Context, urlStr string, isListen bool) (info *live.
 func removeLive(writer http.ResponseWriter, r *http.Request) {
 	inst := instance.GetInstance(r.Context())
 	vars := mux.Vars(r)
-	live, ok := inst.Lives[live.ID(vars["id"])]
+	live, ok := inst.Lives[configs.ID(vars["id"])]
 	if !ok {
 		writeJsonWithStatusCode(writer, http.StatusNotFound, commonResp{
 			ErrNo:  http.StatusNotFound,
@@ -322,7 +322,7 @@ func applyLiveRoomsByConfig(ctx context.Context, newLiveRooms []configs.LiveRoom
 				return err
 			}
 		} else {
-			live, ok := inst.Lives[live.ID(room.LiveId)]
+			live, ok := inst.Lives[configs.ID(room.LiveId)]
 			if !ok {
 				return errors.New(fmt.Sprintf("live id: %s can not find", room.LiveId))
 			}
@@ -346,7 +346,7 @@ func applyLiveRoomsByConfig(ctx context.Context, newLiveRooms []configs.LiveRoom
 	for _, room := range loopRooms {
 		if _, ok := newUrlMap[room.Url]; !ok {
 			// remove live
-			live, ok := inst.Lives[live.ID(room.LiveId)]
+			live, ok := inst.Lives[configs.ID(room.LiveId)]
 			if !ok {
 				return errors.New(fmt.Sprintf("live id: %s can not find", room.LiveId))
 			}

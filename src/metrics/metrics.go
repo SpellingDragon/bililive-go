@@ -7,6 +7,7 @@ import (
 	"sync"
 	"time"
 
+	"github.com/hr3lxphr6j/bililive-go/src/configs"
 	"github.com/prometheus/client_golang/prometheus"
 
 	"github.com/hr3lxphr6j/bililive-go/src/instance"
@@ -58,7 +59,7 @@ func (c collector) Collect(ch chan<- prometheus.Metric) {
 	wg := sync.WaitGroup{}
 	for id, l := range c.inst.Lives {
 		wg.Add(1)
-		go func(id live.ID, l live.Live) {
+		go func(id configs.ID, l live.Live) {
 			defer wg.Done()
 			obj, err := c.inst.Cache.Get(l)
 			if err != nil {
@@ -74,10 +75,12 @@ func (c collector) Collect(ch chan<- prometheus.Metric) {
 			if info.Status && listening {
 				ch <- prometheus.MustNewConstMetric(
 					liveDurationSeconds, prometheus.CounterValue, time.Now().Sub(l.GetLastStartTime()).Seconds(),
-					string(id), l.GetRawUrl(), info.HostName, info.RoomName, strconv.FormatInt(info.Live.GetLastStartTime().Unix(), 10),
+					string(id), l.GetRawUrl(), info.HostName, info.RoomName,
+					strconv.FormatInt(info.Live.GetLastStartTime().Unix(), 10),
 				)
 
-				if r, err := c.inst.RecorderManager.(recorders.Manager).GetRecorder(context.Background(), id); err == nil {
+				if r, err := c.inst.RecorderManager.(recorders.Manager).GetRecorder(context.Background(),
+					id); err == nil {
 					if status, err := r.GetStatus(); err == nil {
 						if value, err := strconv.ParseFloat(status["total_size"], 64); err == nil {
 							ch <- prometheus.MustNewConstMetric(recorderTotalBytes, prometheus.CounterValue, value,

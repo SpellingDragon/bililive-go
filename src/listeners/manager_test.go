@@ -30,7 +30,7 @@ func TestManagerAddAndRemoveListener(t *testing.T) {
 	}
 	defer func() { newListener = backup }()
 	l := livemock.NewMockLive(ctrl)
-	l.EXPECT().GetLiveId().Return(live.ID("test")).Times(3)
+	l.EXPECT().GetLiveId().Return(configs.ID("test")).Times(3)
 	assert.NoError(t, m.AddListener(context.Background(), l))
 	assert.Equal(t, ErrListenerExist, m.AddListener(context.Background(), l))
 	ln, err := m.GetListener(context.Background(), "test")
@@ -67,7 +67,7 @@ func TestManagerStartAndClose(t *testing.T) {
 	assert.NoError(t, m.Start(ctx))
 	for i := 0; i < 3; i++ {
 		l := livemock.NewMockLive(ctrl)
-		id := live.ID(fmt.Sprintf("test_%d", i))
+		id := configs.ID(fmt.Sprintf("test_%d", i))
 		l.EXPECT().GetLiveId().Return(id).AnyTimes()
 		assert.NoError(t, m.AddListener(ctx, l))
 	}

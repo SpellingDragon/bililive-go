@@ -93,7 +93,7 @@ func main() {
 
 	events.NewDispatcher(ctx)
 
-	inst.Lives = make(map[live.ID]live.Live)
+	inst.Lives = make(map[configs.ID]live.Live)
 	for index, _ := range inst.Config.LiveRooms {
 		room := &inst.Config.LiveRooms[index]
 		u, err := url.Parse(room.Url)

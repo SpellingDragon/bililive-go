@@ -4,6 +4,7 @@ import (
 	"context"
 	"sync"
 
+	"github.com/hr3lxphr6j/bililive-go/src/configs"
 	"github.com/hr3lxphr6j/bililive-go/src/instance"
 	"github.com/hr3lxphr6j/bililive-go/src/interfaces"
 	"github.com/hr3lxphr6j/bililive-go/src/live"
@@ -15,7 +16,7 @@ var newListener = NewListener
 
 func NewManager(ctx context.Context) Manager {
 	lm := &manager{
-		savers: make(map[live.ID]Listener),
+		savers: make(map[configs.ID]Listener),
 	}
 	instance.GetInstance(ctx).ListenerManager = lm
 	return lm
@@ -24,14 +25,14 @@ func NewManager(ctx context.Context) Manager {
 type Manager interface {
 	interfaces.Module
 	AddListener(ctx context.Context, live live.Live) error
-	RemoveListener(ctx context.Context, liveId live.ID) error
-	GetListener(ctx context.Context, liveId live.ID) (Listener, error)
-	HasListener(ctx context.Context, liveId live.ID) bool
+	RemoveListener(ctx context.Context, liveId configs.ID) error
+	GetListener(ctx context.Context, liveId configs.ID) (Listener, error)
+	HasListener(ctx context.Context, liveId configs.ID) bool
 }
 
 type manager struct {
 	lock   sync.RWMutex
-	savers map[live.ID]Listener
+	savers map[configs.ID]Listener
 }
 
 func (m *manager) registryListener(ctx context.Context, ed events.Dispatcher) {
@@ -97,7 +98,7 @@ func (m *manager) AddListener(ctx context.Context, live live.Live) error {
 	return listener.Start()
 }
 
-func (m *manager) RemoveListener(ctx context.Context, liveId live.ID) error {
+func (m *manager) RemoveListener(ctx context.Context, liveId configs.ID) error {
 	m.lock.Lock()
 	defer m.lock.Unlock()
 	listener, ok := m.savers[liveId]
@@ -128,7 +129,7 @@ func (m *manager) replaceListener(ctx context.Context, oldLive live.Live, newLiv
 	return newListener.Start()
 }
 
-func (m *manager) GetListener(ctx context.Context, liveId live.ID) (Listener, error) {
+func (m *manager) GetListener(ctx context.Context, liveId configs.ID) (Listener, error) {
 	m.lock.RLock()
 	defer m.lock.RUnlock()
 	listener, ok := m.savers[liveId]
@@ -138,7 +139,7 @@ func (m *manager) GetListener(ctx context.Context, liveId live.ID) (Listener, er
 	return listener, nil
 }
 
-func (m *manager) HasListener(ctx context.Context, liveId live.ID) bool {
+func (m *manager) HasListener(ctx context.Context, liveId configs.ID) bool {
 	m.lock.RLock()
 	defer m.lock.RUnlock()
 	_, ok := m.savers[liveId]

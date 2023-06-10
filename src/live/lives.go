@@ -10,6 +10,7 @@ import (
 	"time"
 
 	"github.com/bluele/gcache"
+	"github.com/hr3lxphr6j/bililive-go/src/configs"
 )
 
 var (
@@ -90,11 +91,9 @@ func WithQuality(quality int) Option {
 	}
 }
 
-type ID string
-
 type Live interface {
 	SetLiveIdByString(string)
-	GetLiveId() ID
+	GetLiveId() configs.ID
 	GetRawUrl() string
 	GetInfo() (*Info, error)
 	GetStreamUrls() ([]*url.URL, error)

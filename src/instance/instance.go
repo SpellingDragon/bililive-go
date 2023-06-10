@@ -14,7 +14,7 @@ type Instance struct {
 	WaitGroup       sync.WaitGroup
 	Config          *configs.Config
 	Logger          *interfaces.Logger
-	Lives           map[live.ID]live.Live
+	Lives           map[configs.ID]live.Live
 	Cache           gcache.Cache
 	Server          interfaces.Module
 	EventDispatcher interfaces.Module

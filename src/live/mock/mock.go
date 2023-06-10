@@ -10,6 +10,7 @@ import (
 	time "time"
 
 	gomock "github.com/golang/mock/gomock"
+	"github.com/hr3lxphr6j/bililive-go/src/configs"
 	live "github.com/hr3lxphr6j/bililive-go/src/live"
 )
 
@@ -66,10 +67,10 @@ func (mr *MockLiveMockRecorder) GetLastStartTime() *gomock.Call {
 }
 
 // GetLiveId mocks base method.
-func (m *MockLive) GetLiveId() live.ID {
+func (m *MockLive) GetLiveId() configs.ID {
 	m.ctrl.T.Helper()
 	ret := m.ctrl.Call(m, "GetLiveId")
-	ret0, _ := ret[0].(live.ID)
+	ret0, _ := ret[0].(configs.ID)
 	return ret0
 }
 

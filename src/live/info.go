@@ -2,6 +2,8 @@ package live
 
 import (
 	"encoding/json"
+
+	"github.com/hr3lxphr6j/bililive-go/src/configs"
 )
 
 type Info struct {
@@ -16,18 +18,18 @@ type Info struct {
 
 func (i *Info) MarshalJSON() ([]byte, error) {
 	t := struct {
-		Id                ID     `json:"id"`
-		LiveUrl           string `json:"live_url"`
-		PlatformCNName    string `json:"platform_cn_name"`
-		HostName          string `json:"host_name"`
-		RoomName          string `json:"room_name"`
-		Status            bool   `json:"status"`
-		Listening         bool   `json:"listening"`
-		Recording         bool   `json:"recording"`
-		Initializing      bool   `json:"initializing"`
-		LastStartTime     string `json:"last_start_time,omitempty"`
-		LastStartTimeUnix int64  `json:"last_start_time_unix,omitempty"`
-		AudioOnly         bool   `json:"audio_only"`
+		Id                configs.ID `json:"id"`
+		LiveUrl           string     `json:"live_url"`
+		PlatformCNName    string     `json:"platform_cn_name"`
+		HostName          string     `json:"host_name"`
+		RoomName          string     `json:"room_name"`
+		Status            bool       `json:"status"`
+		Listening         bool       `json:"listening"`
+		Recording         bool       `json:"recording"`
+		Initializing      bool       `json:"initializing"`
+		LastStartTime     string     `json:"last_start_time,omitempty"`
+		LastStartTimeUnix int64      `json:"last_start_time_unix,omitempty"`
+		AudioOnly         bool       `json:"audio_only"`
 	}{
 		Id:             i.Live.GetLiveId(),
 		LiveUrl:        i.Live.GetRawUrl(),
