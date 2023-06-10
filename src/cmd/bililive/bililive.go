@@ -87,7 +87,8 @@ func main() {
 	logger.Debugf("%+v", consts.AppInfo)
 	logger.Debugf("%+v", inst.Config)
 
-	if !utils.IsFFmpegExist(ctx) {
+	path := instance.GetInstance(ctx).Config.FfmpegPath
+	if !utils.IsFFmpegExist(path) {
 		logger.Fatalln("FFmpeg binary not found, Please Check.")
 	}
 

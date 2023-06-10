@@ -16,8 +16,7 @@ import (
 	"github.com/hr3lxphr6j/bililive-go/src/instance"
 )
 
-func GetFFmpegPath(ctx context.Context) (string, error) {
-	path := instance.GetInstance(ctx).Config.FfmpegPath
+func GetFFmpegPath(path string) (string, error) {
 	if path != "" {
 		_, err := os.Stat(path)
 		if err == nil {
@@ -34,8 +33,8 @@ func GetFFmpegPath(ctx context.Context) (string, error) {
 	return path, err
 }
 
-func IsFFmpegExist(ctx context.Context) bool {
-	_, err := GetFFmpegPath(ctx)
+func IsFFmpegExist(path string) bool {
+	_, err := GetFFmpegPath(path)
 	return err == nil
 }
 

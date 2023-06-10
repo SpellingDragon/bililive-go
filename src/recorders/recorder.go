@@ -164,7 +164,8 @@ func (r *SimpleRecorder) TryRecord(ctx context.Context) {
 	r.getLogger().Debugln("End ParseLiveStream(" + url.String() + ", " + fileName + ")")
 	removeEmptyFile(fileName)
 	if r.Config.OnRecordFinished.ConvertToMp4 {
-		ffmpegPath, err := utils.GetFFmpegPath(ctx)
+		path := instance.GetInstance(ctx).Config.FfmpegPath
+		ffmpegPath, err := utils.GetFFmpegPath(path)
 		if err != nil {
 			r.getLogger().WithError(err).Error("failed to find ffmpeg")
 			return
