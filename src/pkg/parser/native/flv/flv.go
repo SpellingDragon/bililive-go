@@ -17,7 +17,6 @@ import (
 	"github.com/hr3lxphr6j/bililive-go/src/live"
 	"github.com/hr3lxphr6j/bililive-go/src/pkg/parser"
 	"github.com/hr3lxphr6j/bililive-go/src/pkg/reader"
-	"github.com/hr3lxphr6j/bililive-go/src/pkg/utils"
 )
 
 const (
@@ -146,7 +145,9 @@ func (p *Parser) doParse(ctx context.Context) error {
 
 func (p *Parser) doCopy(ctx context.Context, n uint32) error {
 	if writtenCount, err := io.CopyN(p.o, p.i, int64(n)); err != nil || writtenCount != int64(writtenCount) {
-		utils.PrintStack(ctx)
+		inst := instance.GetInstance(ctx)
+		logger := inst.Logger
+		logger.Debugf(string(debug.Stack()))
 		if err == nil {
 			err = fmt.Errorf("doCopy(%d), %d bytes written", n, writtenCount)
 		}
@@ -171,7 +172,8 @@ func (p *Parser) doWrite(ctx context.Context, b []byte) error {
 		}
 	}
 	if leftInputSize != 0 {
-		return fmt.Errorf("doWrite([%d]byte) tried %d times, but still has %d bytes to write", len(b), ioRetryCount, leftInputSize)
+		return fmt.Errorf("doWrite([%d]byte) tried %d times, but still has %d bytes to write", len(b), ioRetryCount,
+			leftInputSize)
 	}
 	return nil
 }
