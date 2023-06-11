@@ -165,7 +165,7 @@ func (r *SimpleRecorder) TryRecord(ctx context.Context) {
 	removeEmptyFile(fileName)
 	if r.Config.OnRecordFinished.ConvertToMp4 {
 		path := instance.GetInstance(ctx).Config.FfmpegPath
-		ffmpegPath, err := utils.GetFFmpegPath(path)
+		ffmpegPath, err := ffmpeg.GetFFmpegPath(path)
 		if err != nil {
 			r.getLogger().WithError(err).Error("failed to find ffmpeg")
 			return

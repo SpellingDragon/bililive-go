@@ -3,36 +3,11 @@ package utils
 import (
 	"crypto/md5"
 	"encoding/hex"
-	"errors"
 	"math/rand"
 	"net/url"
-	"os"
-	"os/exec"
 	"regexp"
 	"strings"
 )
-
-func GetFFmpegPath(path string) (string, error) {
-	if path != "" {
-		_, err := os.Stat(path)
-		if err == nil {
-			return path, nil
-		} else {
-			return "", err
-		}
-	}
-	path, err := exec.LookPath("ffmpeg")
-	if errors.Is(err, exec.ErrDot) {
-		// put ffmpeg.exe and binary like bililive-windows-amd64.exe to the same folder is allowed
-		path, err = exec.LookPath("./ffmpeg")
-	}
-	return path, err
-}
-
-func IsFFmpegExist(path string) bool {
-	_, err := GetFFmpegPath(path)
-	return err == nil
-}
 
 func GetMd5String(b []byte) string {
 	md5Obj := md5.New()

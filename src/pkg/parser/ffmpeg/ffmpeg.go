@@ -14,7 +14,6 @@ import (
 	"github.com/hr3lxphr6j/bililive-go/src/instance"
 	"github.com/hr3lxphr6j/bililive-go/src/live"
 	"github.com/hr3lxphr6j/bililive-go/src/pkg/parser"
-	"github.com/hr3lxphr6j/bililive-go/src/pkg/utils"
 )
 
 const (
@@ -125,7 +124,7 @@ func (p *Parser) Status() (map[string]string, error) {
 
 func (p *Parser) ParseLiveStream(ctx context.Context, url *url.URL, live live.Live, file string) (err error) {
 	path := instance.GetInstance(ctx).Config.FfmpegPath
-	ffmpegPath, err := utils.GetFFmpegPath(path)
+	ffmpegPath, err := GetFFmpegPath(path)
 	if err != nil {
 		return err
 	}
@@ -166,4 +165,22 @@ func (p *Parser) Stop() error {
 		}
 	})
 	return nil
+}
+
+func GetFFmpegPath(path string) (string, error) {
+	if path != "" {
+		_, err := os.Stat(path)
+		if err == nil {
+			return path, nil
+		} else {
+			return "", err
+		}
+	}
+	path, err := exec.LookPath("ffmpeg")
+	return path, err
+}
+
+func IsFFmpegExist(path string) bool {
+	_, err := GetFFmpegPath(path)
+	return err == nil
 }

@@ -11,6 +11,7 @@ import (
 	"time"
 
 	"github.com/bluele/gcache"
+	"github.com/hr3lxphr6j/bililive-go/src/pkg/parser/ffmpeg"
 
 	_ "github.com/hr3lxphr6j/bililive-go/src/cmd/bililive/internal"
 	"github.com/hr3lxphr6j/bililive-go/src/cmd/bililive/internal/flag"
@@ -22,7 +23,6 @@ import (
 	"github.com/hr3lxphr6j/bililive-go/src/log"
 	"github.com/hr3lxphr6j/bililive-go/src/metrics"
 	"github.com/hr3lxphr6j/bililive-go/src/pkg/events"
-	"github.com/hr3lxphr6j/bililive-go/src/pkg/utils"
 	"github.com/hr3lxphr6j/bililive-go/src/recorders"
 	"github.com/hr3lxphr6j/bililive-go/src/servers"
 )
@@ -88,7 +88,7 @@ func main() {
 	logger.Debugf("%+v", inst.Config)
 
 	path := instance.GetInstance(ctx).Config.FfmpegPath
-	if !utils.IsFFmpegExist(path) {
+	if !ffmpeg.IsFFmpegExist(path) {
 		logger.Fatalln("FFmpeg binary not found, Please Check.")
 	}
 
